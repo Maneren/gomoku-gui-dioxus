@@ -3,6 +3,17 @@ name = "gomoku"
 version = "0.1.0"
 edition = "2021"
 
+[profile.dev]
+opt-level = 3
+
+[profile.release]
+panic = "abort"
+codegen-units = 1
+lto = true
+strip = true
+
 [dependencies]
 dioxus = "0.3.2"
 dioxus-desktop = "0.3.0"
+tokio = "1.25.0"
+gomoku_lib = { git = "https://github.com/Maneren/gomoku-rust", branch = "master" }
