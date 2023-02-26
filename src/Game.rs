@@ -8,7 +8,7 @@ pub fn Game(cx: Scope) -> Element {
   let current_player = use_state(cx, || Player::X);
   let moves = use_ref(cx, Vec::<TilePointer>::new);
   let loading = use_state(cx, || false);
-  let time_limit = use_state(cx, || "5000".to_string());
+  let time_limit = use_state(cx, || 5000);
 
   let on_tile_click = move |ptr: TilePointer| {
     if board.read().get_tile(ptr).is_none() {
@@ -26,7 +26,7 @@ pub fn Game(cx: Scope) -> Element {
     let moves = moves.clone();
     let loading = loading.clone();
 
-    let time_limit = time_limit.parse().unwrap_or(5000);
+    let time_limit = **time_limit;
 
     cx.spawn(async move {
       let mut board_clone = board.read().clone();
@@ -79,7 +79,7 @@ pub fn Game(cx: Scope) -> Element {
           value: "{time_limit}",
           placeholder: "Time limit",
           width: "100px",
-          oninput: move |evt| time_limit.set(evt.value.clone()),
+          oninput: move |evt| time_limit.set(evt.value.parse().unwrap_or(5000)),
         }
       },
       BoardElement {
