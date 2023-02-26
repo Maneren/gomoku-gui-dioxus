@@ -1276,8 +1276,8 @@ dependencies = [
 
 [[package]]
 name = "gomoku_lib"
-version = "6.0.0"
-source = "git+https://github.com/Maneren/gomoku-rust?branch=master#896e6257b2442df8bca4df4da514caf1cd56c2d5"
+version = "6.1.0"
+source = "git+https://github.com/Maneren/gomoku-rust?branch=master#682fb6fb5610a9c727c1ff7e4069d11f838add3b"
 dependencies = [
  "once_cell",
  "rayon",
