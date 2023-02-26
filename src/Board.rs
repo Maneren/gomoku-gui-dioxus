@@ -16,14 +16,23 @@ fn TileElement<'a>(
   }))
 }
 
-#[inline_props]
-fn Row<'a>(
-  cx: Scope,
+#[derive(Props)]
+struct RowProps<'a> {
   board: &'a Board,
-  moves: &'a [TilePointer],
+  #[props(!optional)]
+  highlight: Option<TilePointer>,
   y: u8,
   on_click: EventHandler<'a, TilePointer>,
-) -> Element {
+}
+
+fn Row<'a>(cx: Scope<'a, RowProps>) -> Element<'a> {
+  let RowProps {
+    board,
+    highlight,
+    y,
+    on_click,
+  } = cx.props;
+
   cx.render(rsx!(div{
       key: "{y}",
       class: "row",
@@ -34,7 +43,7 @@ fn Row<'a>(
                   key: "{x}",
                   on_click: move |ptr| on_click.call(ptr),
                   ptr: ptr,
-                  highlight: moves.last() == Some(&ptr),
+                  highlight: *highlight == Some(ptr),
                   board: board,
               }
           )
@@ -42,20 +51,28 @@ fn Row<'a>(
   }))
 }
 
-#[inline_props]
-pub fn Board<'a>(
-  cx: Scope<'a>,
+#[derive(Props)]
+pub struct Props<'a> {
   board: Board,
-  moves: Vec<TilePointer>,
+  #[props(!optional)]
+  highlight: Option<TilePointer>,
   on_click: EventHandler<'a, TilePointer>,
-) -> Element {
+}
+
+pub fn Board<'a>(cx: Scope<'a, Props>) -> Element<'a> {
+  let Props {
+    board,
+    highlight,
+    on_click,
+  } = cx.props;
+
   cx.render(rsx!(div {
       style { include_str!("./Board.css") }
       (0..board.get_size()).map(|y| {
           rsx!(Row {
               y: y,
               board: board,
-              moves: moves,
+              highlight: *highlight,
               on_click: move |ptr| on_click.call(ptr)
           })
       })

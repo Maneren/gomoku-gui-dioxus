@@ -84,7 +84,7 @@ pub fn Game(cx: Scope) -> Element {
       },
       BoardElement {
           board: board.read().clone(),
-          moves: moves.read().clone(),
+          highlight: moves.read().last().copied(),
           on_click: move |ptr| { if !loading { on_tile_click(ptr) } }
       },
       if **loading {
