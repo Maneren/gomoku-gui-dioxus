@@ -32,6 +32,8 @@ pub fn Game(cx: Scope) -> Element {
       let mut board_clone = board.read().clone();
       let player = *current_player;
 
+      println!("{board_clone}");
+
       let (Move { tile: ptr, .. }, ..) = tokio::spawn(async move {
         gomoku_lib::decide(&mut board_clone, player, time_limit).expect("Error running the engine")
       })
