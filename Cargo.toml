@@ -16,4 +16,11 @@ strip = true
 dioxus = "0.3.2"
 dioxus-desktop = "0.3.0"
 tokio = "1.25.0"
+
+[target.'cfg(not(target_env = "msvc"))'.dependencies]
+gomoku_lib = { git = "https://github.com/Maneren/gomoku-rust", branch = "master", features = [
+  "jemalloc",
+] }
+
+[target.'cfg(target_env = "msvc")'.dependencies]
 gomoku_lib = { git = "https://github.com/Maneren/gomoku-rust", branch = "master" }
