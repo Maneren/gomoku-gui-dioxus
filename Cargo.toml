@@ -16,4 +16,6 @@ strip = true
 dioxus = "0.3.2"
 dioxus-desktop = "0.3.0"
 tokio = "1.25.0"
-gomoku_lib = { git = "https://github.com/Maneren/gomoku-rust", branch = "master" }
+gomoku_lib = { git = "https://github.com/Maneren/gomoku-rust", branch = "master", features = [
+  "jemallocator",
+] }
