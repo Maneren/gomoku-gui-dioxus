@@ -55,6 +55,12 @@ pub fn Game(cx: Scope) -> Element {
     current_player.set(!current_player);
   };
 
+  let new_game = move || {
+    board.set(Board::get_empty_board(15));
+    current_player.set(Player::X);
+    moves.set(Vec::new());
+  };
+
   cx.render(rsx!(div {
       class: "game",
       style { include_str!("./Game.css") },
@@ -68,6 +74,10 @@ pub fn Game(cx: Scope) -> Element {
           button {
               onclick: move |_| undo(),
               "Undo"
+          },
+          button {
+              onclick: move |_| new_game(),
+              "New game"
           }
       },
       div {
