@@ -1,7 +1,7 @@
 use dioxus::prelude::*;
 use gomoku_lib::{Board, Move, Player, TilePointer};
 
-use crate::Board::Board as BoardElement;
+use crate::Board::{find_win, Board as BoardElement};
 
 pub fn Game(cx: Scope) -> Element {
   let board = use_ref(cx, || Board::get_empty_board(15));
@@ -10,7 +10,13 @@ pub fn Game(cx: Scope) -> Element {
   let loading = use_state(cx, || false);
   let time_limit = use_state(cx, || 5000);
 
-  let on_tile_click = move |ptr: TilePointer| {
+  let win = find_win(&board.read());
+
+  let on_tile_click = move |ptr| {
+    if *loading.get() || win.is_some() {
+      return;
+    }
+
     if board.read().get_tile(ptr).is_none() {
       board.write().set_tile(ptr, Some(**current_player));
       moves.write().push(ptr);
@@ -19,6 +25,10 @@ pub fn Game(cx: Scope) -> Element {
   };
 
   let calculate = move || {
+    if *loading.get() || win.is_some() {
+      return;
+    }
+
     loading.set(true);
 
     let board = board.clone();
@@ -97,7 +107,8 @@ pub fn Game(cx: Scope) -> Element {
       BoardElement {
           board: board.read().clone(),
           highlight: moves.read().last().copied(),
-          on_click: move |ptr| { if !loading { on_tile_click(ptr) } }
+          win: win,
+          on_click: on_tile_click
       },
       if **loading {
           rsx!(div{

@@ -6,6 +6,8 @@
   justify-content: center;
   align-items: center;
 
+  box-sizing: border-box;
+
   padding: 0;
   margin: 0;
 
@@ -30,9 +32,19 @@
   justify-content: center;
   flex-direction: column;
 
+  position: relative;
+
   border: 1px solid black;
 }
 
 .highlight {
   background-color: #ff6666aa;
+}
+
+.win {
+  position: absolute;
+  background-color: #ff5555;
+  z-index: 100;
+  height: 0.2rem;
+  transform-origin: left center;
 }
