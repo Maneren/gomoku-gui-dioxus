@@ -5,6 +5,10 @@
   justify-content: center;
 }
 
+.game > div {
+  margin: 4px;
+}
+
 .buttons {
   display: flex;
   align-items: center;

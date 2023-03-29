@@ -100,7 +100,7 @@ pub fn Game(cx: Scope) -> Element {
           r#type: "number",
           value: "{time_limit}",
           placeholder: "Time limit",
-          width: "100px",
+          style: "width: 4rem",
           onchange: move |evt| time_limit.set(evt.value.parse().unwrap_or(5000)),
         }
       },
