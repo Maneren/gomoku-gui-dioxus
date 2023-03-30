@@ -72,49 +72,49 @@ pub fn Game(cx: Scope) -> Element {
   };
 
   cx.render(rsx!(div {
-      class: "game",
-      style { include_str!("./Game.css") },
-      h1 { "Gomoku" },
-      div {
-          class: "buttons",
-          button {
-              onclick: move |_| calculate(),
-              "Calculate"
-          },
-          button {
-              onclick: move |_| undo(),
-              "Undo"
-          },
-          button {
-              onclick: move |_| new_game(),
-              "New game"
-          }
+    class: "game",
+    style { include_str!("./Game.css") },
+    h1 { "Gomoku" },
+    div {
+      class: "buttons",
+      button {
+        onclick: move |_| calculate(),
+        "Calculate"
       },
-      div {
-        label {
-          r#for: "time-limit",
-          "Engine time limit (ms): "
-        },
-        input {
-          id: "time-limit",
-          r#type: "number",
-          value: "{time_limit}",
-          placeholder: "Time limit",
-          style: "width: 4rem",
-          onchange: move |evt| time_limit.set(evt.value.parse().unwrap_or(5000)),
-        }
+      button {
+        onclick: move |_| undo(),
+        "Undo"
       },
-      BoardElement {
-          board: board.read().clone(),
-          highlight: moves.read().last().copied(),
-          win: win,
-          on_click: on_tile_click
-      },
-      if **loading {
-          rsx!(div{
-              class: "loading",
-              "Computing..."
-          })
+      button {
+        onclick: move |_| new_game(),
+        "New game"
       }
+    },
+    div {
+      label {
+        r#for: "time-limit",
+        "Engine time limit (ms): "
+      },
+      input {
+        id: "time-limit",
+        r#type: "number",
+        value: "{time_limit}",
+        placeholder: "Time limit",
+        style: "width: 4rem",
+        onchange: move |evt| time_limit.set(evt.value.parse().unwrap_or(5000)),
+      }
+    },
+    BoardElement {
+      board: board.read().clone(),
+      highlight: moves.read().last().copied(),
+      win: win,
+      on_click: on_tile_click
+    },
+    if **loading {
+      rsx!(div{
+        class: "loading",
+        "Computing..."
+      })
+    }
   }))
 }
