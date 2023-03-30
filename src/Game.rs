@@ -5,24 +5,12 @@ use crate::Board::{find_win, Board as BoardElement};
 
 pub fn Game(cx: Scope) -> Element {
   let board = use_ref(cx, || Board::get_empty_board(15));
-  let current_player = use_state(cx, || Player::X);
+  let current_player = use_ref(cx, || Player::X);
   let moves = use_ref(cx, Vec::<TilePointer>::new);
   let loading = use_state(cx, || false);
   let time_limit = use_state(cx, || 5000);
 
   let win = find_win(&board.read());
-
-  let on_tile_click = move |ptr| {
-    if *loading.get() || win.is_some() {
-      return;
-    }
-
-    if board.read().get_tile(ptr).is_none() {
-      board.write().set_tile(ptr, Some(**current_player));
-      moves.write().push(ptr);
-      current_player.set(!current_player);
-    }
-  };
 
   let calculate = move || {
     if *loading.get() || win.is_some() {
@@ -35,12 +23,12 @@ pub fn Game(cx: Scope) -> Element {
     let current_player = current_player.clone();
     let moves = moves.clone();
     let loading = loading.clone();
-
-    let time_limit = **time_limit;
+    let time_limit = time_limit.clone();
 
     cx.spawn(async move {
       let mut board_clone = board.read().clone();
-      let player = *current_player;
+      let player = *current_player.read();
+      let time_limit = *time_limit;
 
       println!("{board_clone}");
 
@@ -50,9 +38,11 @@ pub fn Game(cx: Scope) -> Element {
       .await
       .expect("Error running tokio thread");
 
-      board.write().set_tile(ptr, Some(*current_player));
+      board.write().set_tile(ptr, Some(player));
       moves.write().push(ptr);
-      current_player.set(!&current_player);
+
+      let player = *current_player.read();
+      *current_player.write() = !player;
 
       loading.set(false);
     });
@@ -62,13 +52,31 @@ pub fn Game(cx: Scope) -> Element {
     let Some(tile) = moves.write().pop() else { return };
 
     board.write().set_tile(tile, None);
-    current_player.set(!current_player);
+
+    let player = *current_player.read();
+    *current_player.write() = !player;
   };
 
   let new_game = move || {
     board.set(Board::get_empty_board(15));
     current_player.set(Player::X);
     moves.set(Vec::new());
+  };
+
+  let on_tile_click = move |ptr| {
+    if *loading.get() || win.is_some() {
+      return;
+    }
+
+    if board.read().get_tile(ptr).is_none() {
+      board.write().set_tile(ptr, Some(*current_player.read()));
+      moves.write().push(ptr);
+
+      let player = *current_player.read();
+      *current_player.write() = !player;
+
+      calculate();
+    }
   };
 
   cx.render(rsx!(div {
