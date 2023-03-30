@@ -118,11 +118,11 @@ pub fn Game(cx: Scope) -> Element {
       win: win,
       on_click: on_tile_click
     },
-    if **loading {
-      rsx!(div{
+    loading.then(||
+      rsx!(div {
         class: "loading",
         "Computing..."
       })
-    }
+    )
   }))
 }
