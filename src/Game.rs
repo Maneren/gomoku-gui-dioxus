@@ -32,17 +32,23 @@ pub fn Game(cx: Scope) -> Element {
 
       println!("{board_clone}");
 
-      let (Move { tile: ptr, .. }, ..) = tokio::spawn(async move {
-        gomoku_lib::decide(&mut board_clone, player, time_limit).expect("Error running the engine")
-      })
-      .await
-      .expect("Error running tokio thread");
+      let result =
+        tokio::spawn(async move { gomoku_lib::decide(&mut board_clone, player, time_limit) })
+          .await
+          .expect("Error running tokio thread");
 
-      board.write().set_tile(ptr, Some(player));
-      moves.write().push(ptr);
+      match result {
+        Ok((Move { tile: ptr, .. }, ..)) => {
+          board.write().set_tile(ptr, Some(player));
+          moves.write().push(ptr);
 
-      let player = *current_player.read();
-      *current_player.write() = !player;
+          let player = *current_player.read();
+          *current_player.write() = !player;
+        }
+        Err(e) => {
+          eprintln!("Error running the engine: {e}");
+        }
+      }
 
       loading.set(false);
     });
