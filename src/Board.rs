@@ -54,99 +54,88 @@ pub fn find_win(board: &Board) -> Option<(TilePointer, TilePointer)> {
     .find_map(|x| x)
 }
 
-#[inline_props]
-fn TileElement<'a>(
-  cx: Scope,
-  board: &'a Board,
-  ptr: TilePointer,
-  highlight: bool,
-  on_click: EventHandler<'a, TilePointer>,
-) -> Element {
-  cx.render(rsx!(div {
-      class: if *highlight { "tile highlight" } else { "tile" },
-      onclick: move |_| on_click.call(*ptr),
-      board.get_tile(*ptr).map_or(" ".to_owned(), |player| player.char().to_uppercase().to_string())
-  }))
+#[component]
+fn TileElement(ptr: TilePointer, highlight: bool, on_click: EventHandler<TilePointer>) -> Element {
+  let board = use_context::<Signal<Board>>();
+
+  rsx! {
+    div {
+      class: if highlight { "tile highlight" } else { "tile" },
+      onclick: move |_| on_click.call(ptr),
+      { board.read().get_tile(ptr).map_or(" ".to_owned(), |player| player.char().to_uppercase().to_string()) }
+    }
+  }
 }
 
-#[derive(Props)]
-struct RowProps<'a> {
-  board: &'a Board,
-  #[props(!optional)]
-  highlight: Option<TilePointer>,
-  y: u8,
-  on_click: EventHandler<'a, TilePointer>,
-}
+#[component]
+fn Row(highlight: Option<TilePointer>, y: u8, on_click: EventHandler<TilePointer>) -> Element {
+  let board = use_context::<Signal<Board>>();
 
-fn Row<'a>(cx: Scope<'a, RowProps>) -> Element<'a> {
-  let RowProps {
-    board,
-    highlight,
-    y,
-    on_click,
-  } = cx.props;
-
-  cx.render(rsx!(div{
+  rsx! {
+    div{
       key: "{y}",
       class: "row",
-      (0..board.size()).map(|x| {
-          let ptr = TilePointer {x, y: *y};
-          rsx!(
-              TileElement {
-                  key: "{x}",
-                  on_click: move |ptr| on_click.call(ptr),
-                  ptr: ptr,
-                  highlight: *highlight == Some(ptr),
-                  board: board,
-              }
-          )
-      })
-  }))
-}
-
-#[derive(Props)]
-pub struct Props<'a> {
-  board: Board,
-  #[props(!optional)]
-  highlight: Option<TilePointer>,
-  #[props(!optional)]
-  win: Option<(TilePointer, TilePointer)>,
-  on_click: EventHandler<'a, TilePointer>,
-}
-
-pub fn Board<'a>(cx: Scope<'a, Props>) -> Element<'a> {
-  let Props {
-    board,
-    highlight,
-    win,
-    on_click,
-  } = cx.props;
-
-  cx.render(rsx!(div {
-    class: "board",
-    style { include_str!("./Board.css") }
-    if let Some((TilePointer { x: x1, y: y1 }, TilePointer { x: x2, y: y2 })) = win {
-      let x1 = f32::from(2 * x1 + 1);
-      let y1 = f32::from(2 * y1 + 1);
-      let x2 = f32::from(2 * x2 + 1);
-      let y2 = f32::from(2 * y2 + 1);
-
-      let len = ((x2 - x1).powi(2) + (y2 - y1).powi(2)).sqrt();
-
-      let angle = -((x2 - x1) / len).asin() + PI / 2.0;
-
-      rsx!(div {
-        class: "win",
-        style: "rotate: {angle}rad; top: {y1}rem; left: {x1}rem; width: {len}rem;"
-      })
+      {
+        (0..board.read().size()).map(|x| {
+          let ptr = TilePointer { x, y };
+          rsx! {
+            TileElement {
+              key: "{x}",
+              on_click: move |ptr| on_click.call(ptr),
+              ptr: ptr,
+              highlight: highlight == Some(ptr),
+            }
+          }
+        })
+      }
     }
-    (0..board.size()).map(|y| {
-      rsx!(Row {
-        y: y,
-        board: board,
-        highlight: *highlight,
-        on_click: move |ptr| on_click.call(ptr)
-      })
-    })
-  }))
+  }
+}
+
+#[component]
+pub fn BoardElement(
+  #[props(!optional)] highlight: Option<TilePointer>,
+  #[props(!optional)] win: Option<(TilePointer, TilePointer)>,
+  on_click: EventHandler<TilePointer>,
+) -> Element {
+  let board = consume_context::<Signal<Board>>();
+
+  rsx! {
+    div {
+      class: "board",
+      style {
+        { include_str!("./Board.css") }
+      },
+      {
+        if let Some((TilePointer { x: x1, y: y1 }, TilePointer { x: x2, y: y2 })) = win {
+          let x1 = f32::from(2 * x1 + 1);
+          let y1 = f32::from(2 * y1 + 1);
+          let x2 = f32::from(2 * x2 + 1);
+          let y2 = f32::from(2 * y2 + 1);
+
+          let len = ((x2 - x1).powi(2) + (y2 - y1).powi(2)).sqrt();
+
+          let angle = -((x2 - x1) / len).asin() + PI / 2.0;
+
+          rsx!(div {
+            class: "win",
+            style: "rotate: {angle}rad; top: {y1}rem; left: {x1}rem; width: {len}rem;"
+          })
+        } else {
+          None
+        }
+      },
+      {
+        (0..board.read().size()).map(|y| {
+          rsx! {
+            Row {
+              y,
+              highlight,
+              on_click: move |ptr| on_click.call(ptr)
+            }
+          }
+        })
+      }
+    }
+  }
 }

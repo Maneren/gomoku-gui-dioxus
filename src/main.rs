@@ -4,19 +4,19 @@
 mod Board;
 mod Game;
 
-use dioxus_desktop::{Config, WindowBuilder};
+use dioxus::prelude::{desktop, LaunchBuilder};
+use dioxus_desktop::{Config, LogicalSize, WindowBuilder};
 use Game::Game;
 
 fn main() {
-  dioxus_desktop::launch_cfg(
-    Game,
-    Config::new().with_window(
-      WindowBuilder::new()
-        .with_resizable(true)
-        .with_title("Gomoku")
-        .with_inner_size(dioxus_desktop::wry::application::dpi::LogicalSize::new(
-          800.0, 800.0,
-        )),
-    ),
-  );
+  LaunchBuilder::desktop()
+    .with_cfg(desktop!({
+      Config::new().with_window(
+        WindowBuilder::new()
+          .with_resizable(true)
+          .with_title("Gomoku")
+          .with_inner_size(LogicalSize::new(800.0, 800.0)),
+      )
+    }))
+    .launch(Game);
 }
