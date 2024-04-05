@@ -8,7 +8,7 @@ pub fn Game(cx: Scope) -> Element {
   let current_player = use_ref(cx, || Player::X);
   let moves = use_ref(cx, Vec::<TilePointer>::new);
   let loading = use_state(cx, || false);
-  let time_limit = use_state(cx, || 5000);
+  let time_limit = use_state(cx, || 1000);
 
   let win = find_win(&board.read());
 
@@ -115,7 +115,7 @@ pub fn Game(cx: Scope) -> Element {
         value: "{time_limit}",
         placeholder: "Time limit",
         style: "width: 4rem",
-        onchange: move |evt| time_limit.set(evt.value.parse().unwrap_or(5000)),
+        onchange: move |evt| time_limit.set(evt.value.parse().unwrap_or(1000)),
       }
     },
     BoardElement {
