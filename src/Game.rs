@@ -4,7 +4,7 @@ use gomoku_lib::{Board, Move, Player, TilePointer};
 use crate::Board::{find_win, Board as BoardElement};
 
 pub fn Game(cx: Scope) -> Element {
-  let board = use_ref(cx, || Board::get_empty_board(15));
+  let board = use_ref(cx, || Board::new_empty(15));
   let current_player = use_ref(cx, || Player::X);
   let moves = use_ref(cx, Vec::<TilePointer>::new);
   let loading = use_state(cx, || false);
@@ -64,7 +64,7 @@ pub fn Game(cx: Scope) -> Element {
   };
 
   let new_game = move || {
-    board.set(Board::get_empty_board(15));
+    board.set(Board::new_empty(15));
     current_player.set(Player::X);
     moves.set(Vec::new());
   };

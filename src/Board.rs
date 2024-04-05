@@ -89,7 +89,7 @@ fn Row<'a>(cx: Scope<'a, RowProps>) -> Element<'a> {
   cx.render(rsx!(div{
       key: "{y}",
       class: "row",
-      (0..board.get_size()).map(|x| {
+      (0..board.size()).map(|x| {
           let ptr = TilePointer {x, y: *y};
           rsx!(
               TileElement {
@@ -140,7 +140,7 @@ pub fn Board<'a>(cx: Scope<'a, Props>) -> Element<'a> {
         style: "rotate: {angle}rad; top: {y1}rem; left: {x1}rem; width: {len}rem;"
       })
     }
-    (0..board.get_size()).map(|y| {
+    (0..board.size()).map(|y| {
       rsx!(Row {
         y: y,
         board: board,
