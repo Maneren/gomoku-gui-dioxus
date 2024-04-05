@@ -55,7 +55,9 @@ pub fn Game(cx: Scope) -> Element {
   };
 
   let undo = move || {
-    let Some(tile) = moves.write().pop() else { return };
+    let Some(tile) = moves.write().pop() else {
+      return;
+    };
 
     board.write().set_tile(tile, None);
 
