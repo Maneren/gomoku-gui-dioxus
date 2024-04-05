@@ -13,7 +13,7 @@ pub fn Game(cx: Scope) -> Element {
   let win = find_win(&board.read());
 
   let calculate = move || {
-    if *loading.get() || win.is_some() {
+    if *loading.get() || find_win(&board.read()).is_some() {
       return;
     }
 
