@@ -1,13 +1,10 @@
 name: Build and upload binaries to release
-
 on:
   push:
     tags:
       - v[0-9].*
-
 env:
   CARGO_INCREMENTAL: 0
-
 jobs:
   build-and-release:
     name: Build and release
@@ -19,27 +16,20 @@ jobs:
           #
           # - target: i686-unknown-linux-gnu
           #   os: ubuntu-latest
-
           - target: x86_64-unknown-linux-gnu
             os: ubuntu-latest
-
           - target: aarch64-apple-darwin
             os: macos-latest
-
           - target: x86_64-apple-darwin
             os: macos-latest
-
           - target: i686-pc-windows-msvc
             os: windows-latest
-
           - target: x86_64-pc-windows-msvc
             os: windows-latest
-
     runs-on: ${{ matrix.job.os }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-
       - name: Install prerequisites
         shell: bash
         run: |
@@ -50,7 +40,6 @@ jobs:
           case ${{ matrix.job.target }} in
             x86_64-*-linux-*) sudo apt-get -y update ; sudo apt-get -y install libwebkit2gtk-4.0-dev libgtk-3-dev libappindicator3-dev;;
           esac
-
       - name: Initialize workflow variables
         id: vars
         shell: bash
@@ -98,7 +87,6 @@ jobs:
 
           echo "STRIP=${STRIP}"
           echo "STRIP=${STRIP}" >> "$GITHUB_OUTPUT"
-
       - name: Install toolchain
         uses: actions-rs/toolchain@v1
         with:
@@ -106,22 +94,18 @@ jobs:
           target: ${{ matrix.job.target }}
           profile: minimal
           override: true
-
       - name: Build
         uses: actions-rs/cargo@v1
         with:
           use-cross: ${{ steps.vars.outputs.CROSS }}
           command: build
           args: --release --locked --target=${{ matrix.job.target }}
-
       - name: Strip the binary
         if: ${{ steps.vars.outputs.STRIP }}
         run: ${{ steps.vars.outputs.STRIP }} '${{ steps.vars.outputs.RELEASE }}/${{ steps.vars.outputs.BINARY }}'
-
       - name: Create archive
         run: |
           tar caf ${{ steps.vars.outputs.ARCHIVE }} --directory=${{ steps.vars.outputs.RELEASE }} ${{ steps.vars.outputs.BINARY }}
-
       - name: Upload binary to release
         uses: svenstaro/upload-release-action@v1-release
         with:
