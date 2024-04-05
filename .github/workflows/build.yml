@@ -58,8 +58,8 @@ jobs:
           TARGET=${{ matrix.job.target }}
 
           case $TARGET in
-            *-pc-windows-*) BINARY="gomoku.exe" ;;
-            *)              BINARY="gomoku" ;;
+            *-pc-windows-*) BINARY="gomoku-gui.exe" ;;
+            *)              BINARY="gomoku-gui" ;;
           esac;
 
           echo "BINARY=${BINARY}"
@@ -76,8 +76,8 @@ jobs:
 
 
           case $TARGET in
-            *-linux-*) ARCHIVE="gomoku_$TARGET.tar.gz" ;;
-            *)         ARCHIVE="gomoku_$TARGET.zip" ;;
+            *-linux-*) ARCHIVE="gomoku-gui_$TARGET.tar.gz" ;;
+            *)         ARCHIVE="gomoku-gui_$TARGET.zip" ;;
           esac;
 
           echo "ARCHIVE=${ARCHIVE}"
