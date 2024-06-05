@@ -20,12 +20,6 @@ pub fn Game() -> Element {
 
     loading.set(true);
 
-    // let board = board.clone();
-    // let current_player = current_player.clone();
-    // let moves = moves.clone();
-    // let loading = loading.clone();
-    // let time_limit = time_limit.clone();
-
     spawn(async move {
       let mut board_clone = board.read().clone();
       let player = current_player();
