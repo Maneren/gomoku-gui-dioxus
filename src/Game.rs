@@ -3,6 +3,7 @@ use gomoku_lib::{Board, Move, Player, TilePointer};
 
 use crate::Board::{find_win, BoardElement};
 
+#[allow(clippy::too_many_lines)]
 pub fn Game() -> Element {
   let mut board = use_context_provider(|| Signal::new(Board::new_empty(15)));
   let mut current_player = use_signal(|| Player::X);
