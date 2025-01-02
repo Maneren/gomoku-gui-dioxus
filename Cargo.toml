@@ -14,7 +14,7 @@ codegen-units = 1
 [dependencies]
 dioxus = { version = "0.5", features = ["desktop"] }
 dioxus-desktop = "0.5"
-tokio = "1.37.0"
-gomoku_lib = { git = "https://github.com/Maneren/gomoku-rust", tag = "v7.0.2", features = [
+tokio = "1.42.0"
+gomoku_lib = { git = "https://github.com/Maneren/gomoku-rust", tag = "v7.1.0", features = [
   "jemallocator",
 ] }
