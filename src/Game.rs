@@ -38,10 +38,10 @@ pub fn Game() -> Element {
           moves.write().push(ptr);
 
           current_player.set(!player);
-        }
+        },
         Err(e) => {
           eprintln!("Error running the engine: {e}");
-        }
+        },
       }
 
       loading.set(false);
