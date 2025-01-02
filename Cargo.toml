@@ -7,10 +7,9 @@ edition = "2021"
 opt-level = 3
 
 [profile.release]
-panic = "abort"
-codegen-units = 1
-lto = true
 strip = true
+lto = true
+codegen-units = 1
 
 [dependencies]
 dioxus = { version = "0.5", features = ["desktop"] }
